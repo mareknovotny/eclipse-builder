@@ -35,7 +35,7 @@ P2_PLATFORM_OPTS[windows]="-p2.os win32 -p2.ws win32 -p2.arch x86_64"
 declare -A P2_DEST_SUFFIX
 P2_DEST_SUFFIX[linux]="linux-gtk-x86_64"
 P2_DEST_SUFFIX[macosx]="macosx-cocoa-x86_64"
-P2_DEST_SUFFIX[windows]="win32-x86_64"
+P2_DEST_SUFFIX[windows]="windows-x86_64"
 
 
 # #############################################################################
