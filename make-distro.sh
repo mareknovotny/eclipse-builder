@@ -1,19 +1,23 @@
 # Prepare the latest update site zip from windup eclipse nightly job
-if [ ! -f site.zip ];
+if [ ! -f repository.zip ];
 then
 	# download zipped archived results
-	curl http://jenkins.mw.lab.eng.bos.redhat.com/hudson/view/Windup/job/windup-eclipse-plugin-NIGHTLY/lastSuccessfulBuild/artifact/**/site*.zip/*zip*/site-latest.zip -o site-latest.zip;
-    # unzip it and get zipped update site
-    unzip -jo site-latest.zip;
+	curl http://jenkins.hosts.mwqe.eng.bos.redhat.com/hudson/view/Windup/job/windup-eclipse-plugin-NIGHTLY/lastSuccessfulBuild/artifact/**/repository.zip/*zip*/repository.zip -o repository.zip;
+   # unzip it and get zipped update site
+    unzip -jo repository.zip;
     # unzip update site as local repository directory
-    unzip -q site-3*.zip -d repository;
+    unzip -q repository.zip -d repository;
 fi;
 
 # just in case p2 director executable is not already unzipped
 if [ ! -f director/director ]; then unzip -q director_latest.zip ; fi;
 
 export LOCAL_SITE=`pwd`/repository
-mkdir target
+if [ ! -d target ];
+then
+    echo "Creating target for build";
+    mkdir target;
+fi;
 
 # replace token for local update site - IMPORTANT this needs to be absolute path!
 sed -i "s,LOCAL_UPDATE_SITE,$LOCAL_SITE," windup-plugin.conf
@@ -21,7 +25,9 @@ sed -i "s,LOCAL_UPDATE_SITE,$LOCAL_SITE," windup-plugin.conf
 # run eclipse p2 wrapper to collect all features
 # IMPORTANT all paths as arguments need to be absolute paths!
 ./eclipse-builder.sh --p2command ./director/director \
---platform linux --platform windows --platform macosx \
+--platform linux \
+--platform macosx \
+--platform windows \
 --destination `pwd`/target \
 --name eclipse-windup-ide neon-java.conf windup-plugin.conf
 
